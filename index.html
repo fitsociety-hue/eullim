@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ko" class="theme-light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>더 어울림복지사 - 강동구를 연결하는 따뜻한 휴먼 에이전트</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  
+  <script>Chart.defaults.animation = false;</script>
+  
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { interpolate-size: allow-keywords; }
+
+    /* ===== THEMES (class-based ONLY) ===== */
+    html.theme-dark {
+      --bg: #0A0A0A; --surface: #141414; --surface-hover: #1C1C1C;
+      --border: rgba(255,255,255,0.04);
+      --text: #EDEDED; --text-secondary: #888;
+      --accent: #3b82f6; --accent-secondary: #8b5cf6;
+      --positive: #10b981; --negative: #f43f5e; --warning: #f59e0b;
+      --glass-bg: rgba(20, 20, 20, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --gradient-bg: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a5f 100%);
+    }
+    html.theme-light {
+      --bg: #FAFAF9; --surface: #FFFFFF; --surface-hover: #F5F5F4;
+      --border: rgba(0,0,0,0.06);
+      --text: #0f172a; --text-secondary: #64748b;
+      --accent: #2563eb; --accent-secondary: #7c3aed;
+      --positive: #059669; --negative: #e11d48; --warning: #d97706;
+      --glass-bg: rgba(255, 255, 255, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.4);
+      --gradient-bg: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #dbeafe 100%);
+    }
+
+    body {
+      font-family: 'Noto Sans KR', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text);
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
+      letter-spacing: -0.01em; 
+      transition: background 0.3s, color 0.3s;
+      overflow-x: hidden;
+    }
+    
+    h1, h2, h3, h4, h5, h6 { 
+      font-family: 'Inter', 'Noto Sans KR', sans-serif;
+      color: var(--text); 
+      letter-spacing: -0.03em; 
+      line-height: 1.3;
+      text-wrap: balance;
+    }
+    h1 { font-size: 3rem; font-weight: 700; }
+    h2 { font-size: 2.2rem; font-weight: 600; margin-bottom: 24px; }
+    h3 { font-size: 1.5rem; font-weight: 500; margin-bottom: 12px; }
+    p, li, td, th, span, label { color: var(--text); font-weight: 400; font-size: 1rem; }
+    .text-secondary { color: var(--text-secondary); }
+
+    /* ===== GLASSMORPHISM CARD ===== */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px; 
+      padding: 32px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+    }
+    
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px;
+      transition: box-shadow 0.2s ease;
+    }
+    .card:hover {
+      box-shadow: 0 0 0 1px var(--border), 0 8px 16px rgba(0,0,0,0.08);
+    }
+
+    /* ===== LAYOUT & SECTIONS ===== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .section { margin-bottom: 64px; padding: 48px 0; }
+    
+    .grid {
+      display: grid;
+      gap: 32px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+      position: relative;
+      padding: 100px 0 80px;
+      background: var(--gradient-bg);
+      overflow: hidden;
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+    }
+    /* Abstract shapes for background */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: var(--accent-secondary);
+      opacity: 0.2;
+      filter: blur(80px);
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -100px; left: -100px;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.2;
+      filter: blur(60px);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      max-width: 800px;
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--text);
+    }
+
+    /* ===== CHART CONTAINER ===== */
+    .chart-container { 
+      position: relative;
+      height: 400px; 
+      padding: 24px; 
+      border-radius: 12px; 
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate { animation: fadeInUp 0.6s ease-out both; }
+    .animate.delay-1 { animation-delay: 0.1s; }
+    .animate.delay-2 { animation-delay: 0.2s; }
+    .animate.delay-3 { animation-delay: 0.4s; }
+
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+
+    /* ===== PRINT & RESPONSIVE ===== */
+    @media print {
+      body { background: white !important; color: black !important; }
+      .viz-menu, .reveal { display: revert; opacity: 1 !important; transform: none !important; }
+      .glass-card { background: white; border: 1px solid #ddd; box-shadow: none; filter: none; }
+      * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+    @media (max-width: 768px) { 
+      .hero { padding: 60px 0; min-height: 60vh; text-align: center; }
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 2.2rem; }
+    }
+    @media (max-width: 375px) {
+      body { overflow-x: hidden; }
+      h1 { font-size: 1.8rem; }
+      .glass-card { padding: 20px; }
+      .section { margin-bottom: 40px; padding: 32px 0; }
+    }
+
+    /* ===== MENU ===== */
+    .viz-menu { position: fixed; top: 16px; right: 16px; z-index: 9999; }
+    .viz-menu-toggle {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border);
+      color: var(--text); cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(12px); transition: all 0.2s;
+    }
+    .viz-menu-toggle:hover { background: var(--surface-hover); }
+    .viz-menu-dropdown {
+      position: absolute; top: 52px; right: 0; min-width: 200px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 8px;
+      opacity: 0; visibility: hidden; transform: translateY(-8px);
+      transition: all 0.2s; backdrop-filter: blur(16px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .viz-menu-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .viz-menu-dropdown button {
+      width: 100%; padding: 10px 14px; border: none; border-radius: 8px;
+      background: transparent; color: var(--text); font-size: 14px;
+      font-family: inherit; cursor: pointer; text-align: left;
+      display: flex; align-items: center; gap: 10px; transition: background 0.15s;
+    }
+    .viz-menu-dropdown button:hover { background: var(--surface-hover); }
+    
+    .skip-to-content {
+      position: absolute; top: -40px; left: 6px; background: var(--accent);
+      color: white; padding: 8px 12px; text-decoration: none;
+      border-radius: 4px; opacity: 0; pointer-events: none;
+      transition: all 0.2s; z-index: 10000;
+    }
+    .skip-to-content:focus { top: 6px; opacity: 1; pointer-events: auto; }
+    
+    /* Interactive Timeline / Story Steps */
+    .story-steps { margin-top: 32px; display: flex; flex-direction: column; gap: 24px; }
+    .story-step {
+      display: flex; gap: 16px; align-items: flex-start;
+      cursor: pointer;
+      padding: 16px; border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .story-step:hover { background: var(--surface-hover); }
+    .step-number {
+      width: 32px; height: 32px; flex-shrink: 0;
+      background: var(--accent); color: white;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: bold;
+    }
+    .step-content h4 { margin-bottom: 4px; font-size: 1.1rem; }
+    .step-content p { color: var(--text-secondary); font-size: 0.95rem; }
+    
+    /* Details Accordion */
+    details { overflow: hidden; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; }
+    details summary { cursor: pointer; list-style: none; padding: 16px 20px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+    details summary::-webkit-details-marker { display: none; }
+    details summary::after { content: '+'; font-size: 1.2rem; }
+    details[open] summary::after { content: '-'; }
+    .details-content { padding: 0 20px 20px 20px; color: var(--text-secondary); }
+    
+    /* Stat grid */
+    .stat-row { display: flex; gap: 24px; margin-top: 16px; flex-wrap: wrap; }
+    .stat-item { flex: 1; min-width: 140px; }
+    .stat-val { font-size: 2.5rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+    .stat-label { font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; }
+  </style>
+</head>
+<body>
+  
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+
+  <!-- MENU -->
+  <div class="viz-menu">
+    <button class="viz-menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+      </svg>
+    </button>
+    <div class="viz-menu-dropdown" id="vizMenuDropdown">
+      <button onclick="cycleTheme()"><span id="themeIcon">🌙</span><span id="themeLabel">Dark</span></button>
+      <button onclick="downloadImage()"><span>📥</span><span>Download PNG</span></button>
+      <button onclick="window.print()"><span>🖨️</span><span>Print</span></button>
+    </div>
+  </div>
+
+  <main id="main-content" role="main">
+    
+    <!-- HEADER HERO SECTION -->
+    <header class="section hero">
+      <div class="container hero-content">
+        <div class="hero-badge animate">강동구를 연결하는 따뜻한 휴먼 에이전트</div>
+        <h1 class="animate delay-1">당신의 작은 관찰이<br>우리 동네의 내일을 바꿉니다.</h1>
+        <p class="animate delay-2" style="font-size: 1.25rem; margin-top: 16px; color: var(--text); opacity: 0.9; max-width: 600px;">
+          더 더 더 (장애인을 위해 더, 지역주민을 위해 더, 강동구를 위해 더)<br>
+          당신의 사회복지 전문성을 이웃의 희망으로 만들어주세요.
+        </p>
+        <div class="animate delay-3" style="margin-top: 32px;">
+          <a href="#apply" class="btn">활동지원 알아보기</a>
+          <p style="margin-top: 12px; font-size: 0.9rem; color: var(--text-secondary);">월 1~2회, 부담 없는 소규모 활동</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- SECTION 1: ROLE & ACTIVITY SIMULATION -->
+    <section class="section container reveal" data-reveal>
+      <div class="grid" style="align-items: center;">
+        <div>
+          <h2>단절된 이웃을 잇는 전문 활동가</h2>
+          <p class="text-secondary" style="margin-bottom: 24px;">
+            유휴 사회복지사들이 지역사회 내에서 고립 위기 가구를 선제적으로 찾아내고 연결하는 
+            주민 조직화 사업입니다. 동네 사정을 잘 아는 당신의 자격증이 신뢰 관계 형성의 핵심 트리거가 됩니다.
+          </p>
+          
+          <div class="story-steps">
+            <div class="story-step glass-card" onclick="alert('관찰: 일상 속에서 도움이 필요한 고립 가구나 복지 사각지대 이웃의 위기 징후를 발견합니다.')">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h4>관찰 (Observation)</h4>
+                <p>우편물이 쌓인 반지하 방, 놀이터에 혼자 계신 어르신 등 이웃의 징후 기억하기</p>
+              </div>
+            </div>
+            <div class="story-step glass-card" onclick="alert('성찰: 발견한 징후를 바탕으로 사례 공유 간담회 등에서 공감하고 전문적으로 분석합니다.')">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h4>성찰 (Reflection)</h4>
+                <p>간담회에 모여 이웃에게 필요한 복지 서비스가 무엇인지 전문가 시선으로 추론</p>
+              </div>
+            </div>
+            <div class="story-step glass-card" onclick="alert('계획 및 실행: 다가가는 아웃리치와 소통을 통해 복지관과 연계하여 실질적 도움을 제공합니다.')">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h4>계획 및 실천 (Planning & Action)</h4>
+                <p>조심스러운 문고리 아웃리치 및 복지관 자원 기반의 서비스 연계 진행</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="glass-card" style="display:flex; flex-direction:column; justify-content:center;">
+          <h3 style="text-align:center; margin-bottom:32px;">강동구 어울림 네트워크 밀도 변화</h3>
+          <div role="img" aria-label="강동구 어울림 네트워크 밀도 변화 시각화 그래프">
+            <div class="chart-container" style="height: 380px;">
+              <canvas id="networkChart"></canvas>
+            </div>
+          </div>
+          <p class="text-secondary" style="text-align:center; margin-top:20px; font-size:14px;">
+            ※ 작은 만남(Node)이 신뢰(Edge)로 이어져 강동구의 안전망을 촘촘하게 만듭니다.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: MEMORY STREAM (Activity Feed) -->
+    <section class="section container reveal" data-reveal style="background: var(--surface-hover); border-radius:32px; padding: 64px 48px;">
+      <div style="text-align: center; margin-bottom: 48px;">
+        <h2>우리 동네 활동 메모리 스트림</h2>
+        <p class="text-secondary">어울림복지사들의 생생한 관찰 기록과 성과를 타임라인으로 확인하세요.</p>
+        
+        <div class="stat-row" style="justify-content: center; margin-top: 32px; gap: 48px;">
+          <div class="stat-item" style="flex:unset;">
+            <div class="stat-val" data-count="125">0</div>
+            <div class="stat-label">발굴 위기가구</div>
+          </div>
+          <div class="stat-item" style="flex:unset;">
+            <div class="stat-val" data-count="45">0</div>
+            <div class="stat-label">활동 중인 어울림복지사</div>
+          </div>
+          <div class="stat-item" style="flex:unset;">
+            <div class="stat-val" data-count="380">0</div>
+            <div class="stat-label">연계된 이웃 소통 건수</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 12px;">
+            <span class="hero-badge" style="margin:0; background:var(--accent); color:white; border:none; padding:4px 10px;">암사동 이○○ 활동가</span>
+            <span class="text-secondary" style="font-size:13px;">오늘 오전 10:30</span>
+          </div>
+          <h3>놀이터 어르신과의 작은 인사</h3>
+          <p class="text-secondary">
+            혼자 벤치에 앉아 계신 어르신께 가볍게 인사를 건넸습니다. 날씨 이야기를 나누었는데 조금씩 마음을 여시는 것 같아요. 다음 번 만남을 계획해봅니다. (관찰 및 소통)
+          </p>
+        </div>
+        
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 12px;">
+            <span class="hero-badge" style="margin:0; background:var(--accent-secondary); color:white; border:none; padding:4px 10px;">천호동 박○○ 활동가</span>
+            <span class="text-secondary" style="font-size:13px;">어제 오후 2:00</span>
+          </div>
+          <h3>사례회의를 통한 자원 연계</h3>
+          <p class="text-secondary">
+            지난 주 관찰했던 청년 은둔 가구에 대한 월간 사례회의 간담회를 가졌습니다. 복지관 초기 상담을 통해 주거 지원 서비스를 매칭하기로 계획했습니다. (성찰 및 계획)
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: RECRUITMENT / APPLY -->
+    <section id="apply" class="section container reveal" data-reveal>
+      <div class="glass-card" style="text-align: center; padding: 64px 32px; background:var(--gradient-bg);">
+        <h2 style="color:var(--text); margin-bottom: 16px;">부담은 낮추고 전문성은 높이다</h2>
+        <p style="color:var(--text); opacity: 0.9; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+          전일제 근무가 어려워도 괜찮습니다. 월 1~2회의 활동만으로도 충분히 세상을 바꿀 수 있습니다.
+        </p>
+        
+        <div class="grid" style="text-align:left; margin-bottom: 48px;">
+          <details open>
+            <summary>시간과 육체적 부담 최소화</summary>
+            <div class="details-content">
+              1년 차 활동가들은 월 1~2회의 소규모 활동만 진행하며, 자신의 일정(육아 등)에 맞게 자율적으로 조율합니다.
+            </div>
+          </details>
+          <details open>
+            <summary>전문 活动 역량강화 100% 지원</summary>
+            <div class="details-content">
+              양성 교육 (기본 3회) 및 상/하반기 워크숍을 전액 지원하며, 초기 활동 시 복지관 직원이 멘토로 동행합니다.
+            </div>
+          </details>
+          <details>
+            <summary>자격 조건 안내</summary>
+            <div class="details-content">
+              사회복지사 자격증 소지자로서 현재 휴직, 은퇴, 또는 전일제 활동이 어려우나 이웃을 돕고 싶은 강동구 거주민.
+            </div>
+          </details>
+        </div>
+        
+        <div>
+          <!-- 간편 지원 폼을 가장한 버튼 디자인 -->
+          <button class="btn" style="background:var(--text); color:var(--bg); font-size: 1.1rem; padding: 18px 40px;" onclick="alert('지원서 작성 페이지 또는 카카오톡 챗봇 문의창으로 연결됩니다. 모바일 최적화 1-Click 폼이 호출됩니다.')">
+            👉 1분 간편 지원하기
+          </button>
+          <div style="margin-top: 20px;">
+            <span class="hero-badge" style="margin:0; background:rgba(225, 29, 72, 0.8); color:white; border:none; padding:4px 10px; font-size:12px;">선착순 10명 마감 임박 알림</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+  </main>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // === MENU ===
+    function toggleMenu() { 
+      var dropdown = document.getElementById('vizMenuDropdown');
+      if (dropdown) dropdown.classList.toggle('open'); 
+    }
+    document.addEventListener('click', e => { 
+      if (!e.target.closest('.viz-menu')) {
+        var dropdown = document.getElementById('vizMenuDropdown');
+        if (dropdown) dropdown.classList.remove('open');
+      }
+    });
+
+    // === THEME DETECTION ===
+    var savedTheme = localStorage.getItem('viz-theme');
+    var currentTheme = savedTheme || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    function applyTheme(t) {
+      document.documentElement.className = 'theme-' + t;
+      document.getElementById('themeIcon').textContent = t === 'dark' ? '🌙' : '☀️';
+      document.getElementById('themeLabel').textContent = t === 'dark' ? 'Dark' : 'Light';
+      localStorage.setItem('viz-theme', t);
+      currentTheme = t;
+      if (typeof onThemeChange === 'function') onThemeChange();
+    }
+    function cycleTheme() { applyTheme(currentTheme === 'dark' ? 'light' : 'dark'); }
+    applyTheme(currentTheme);
+
+    // === SCROLL REVEAL ===
+    document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('reveal'));
+    var revealObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // === NUMBER COUNTERS ===
+    function animateCounters() {
+      document.querySelectorAll('[data-count]').forEach(function(el) {
+        if (el.dataset.counted) return;
+        el.dataset.counted = '1';
+        var target = parseFloat(el.dataset.count);
+        var start = performance.now(), duration = 1500;
+        (function tick(now) {
+          var p = Math.min((now - start) / duration, 1), eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(target * eased).toLocaleString();
+          if (p < 1) requestAnimationFrame(tick);
+        })(start);
+      });
+    }
+    var counterEl = document.querySelector('[data-count]');
+    if (counterEl) {
+      var cObs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) { if (e.isIntersecting) { animateCounters(); cObs.disconnect(); } });
+      }, { threshold: 0.3 });
+      cObs.observe(counterEl);
+    }
+
+    // === DOWNLOAD PNG ===
+    async function downloadImage() {
+      var menu = document.querySelector('.viz-menu');
+      menu.style.display = 'none';
+      try {
+        var url = await htmlToImage.toPng(document.body, { quality: 1, pixelRatio: 2 });
+        var a = document.createElement('a'); a.href = url;
+        a.download = '강동구_어울림복지사_홈페이지.png'; a.click();
+      } catch(e) { console.error('Download failed:', e); }
+      menu.style.display = '';
+    }
+
+    // === CHART.JS (NETWORK DENSITY GRAPH) ===
+    var chartsBuilt = false;
+    
+    function getChartColors() {
+      var s = getComputedStyle(document.documentElement);
+      return {
+        text: s.getPropertyValue('--text').trim(),
+        textSecondary: s.getPropertyValue('--text-secondary').trim(),
+        border: s.getPropertyValue('--border').trim(),
+        surface: s.getPropertyValue('--surface').trim(),
+        accent: s.getPropertyValue('--accent').trim(),
+      };
+    }
+
+    function resetCanvas(id) {
+      var old = document.getElementById(id);
+      if (!old) return null;
+      var parent = old.parentNode;
+      var canvas = document.createElement('canvas');
+      canvas.id = id;
+      parent.replaceChild(canvas, old);
+      return canvas;
+    }
+
+    function buildCharts() {
+      if (chartsBuilt || typeof Chart === 'undefined') return;
+      
+      var colors = getChartColors();
+      var isDark = document.documentElement.classList.contains('theme-dark');
+      
+      var ctx = resetCanvas('networkChart');
+      if (ctx) {
+        window.networkChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['활동 1개월차', '3개월차', '6개월차', '1년차'],
+            datasets: [{
+              label: '지역사회 연결망 밀도 (Network Density)',
+              data: [0.15, 0.35, 0.58, 0.74],
+              borderColor: colors.accent,
+              backgroundColor: 'rgba(59, 130, 246, 0.2)',
+              borderWidth: 3,
+              tension: 0.4,
+              fill: true,
+              pointBackgroundColor: colors.surface,
+              pointBorderColor: colors.accent,
+              pointRadius: 6,
+              pointHoverRadius: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                enabled: true,
+                padding: 12,
+                cornerRadius: 8,
+                titleFont: { size: 14, family: "'Noto Sans KR', sans-serif" },
+                bodyFont: { size: 13, family: "'Noto Sans KR', sans-serif" }
+              }
+            },
+            layout: { padding: { left: 10, right: 10, top: 20, bottom: 10 } },
+            scales: {
+              x: {
+                ticks: { color: colors.textSecondary, font: { family: "'Noto Sans KR', sans-serif" } },
+                grid: { display: false }
+              },
+              y: {
+                min: 0, max: 1.0,
+                ticks: { color: colors.textSecondary },
+                grid: { color: colors.border, borderDash: [5, 5] }
+              }
+            }
+          }
+        });
+      }
+      chartsBuilt = true;
+    }
+
+    function onThemeChange() {
+      chartsBuilt = false;
+      if (window.networkChartInstance) {
+        try { window.networkChartInstance.destroy(); } catch(e) {}
+      }
+      setTimeout(buildCharts, 100);
+    }
+    
+    document.addEventListener('DOMContentLoaded', buildCharts);
+
+  </script>
+</body>
+</html>
